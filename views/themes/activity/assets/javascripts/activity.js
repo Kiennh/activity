@@ -1,1 +1,270 @@
-!function(t){"function"==typeof define&&define.amd?define(["jquery"],t):t("object"==typeof exports?require("jquery"):jQuery)}(function(t){"use strict";function i(e,o){this.$element=t(e),this.options=t.extend({},i.DEFAULTS,t.isPlainObject(o)&&o),this.init()}var e=(window.FormData,window.Mustache),o="qor.activity",a="enable."+o,n="disable."+o,r="click."+o,s="submit."+o,d=".qor-activity__edit-button",l=".qor-tab__activity",c=".qor-activity__edit-note_form",_=".qor-activity__new-note_form",u=".qor-activity__lists";return i.prototype={constructor:i,init:function(){this.$element;this.bind(),this.initTabs()},bind:function(){this.$element.on(r,t.proxy(this.click,this)).on(s,"form",t.proxy(this.submit,this)),t(document).on(r,l,t.proxy(this.tabClick,this))},submit:function(i){var e,o=(i.target,t(i.target)),a=this,n=t("#scroll-tab-activity").data().noteTitle;return i.preventDefault(),e=o.serialize(),t.ajax(o.prop("action"),{method:o.prop("method"),data:e,dataType:"json",headers:{Accept:"application/json; charset=utf-8"}}).done(function(i){i.errors||(i.NoteTitle=n,o.is(c)&&(a.hideEditForm(o),o.find(".qor-activity__list-note").html(i.Note)),o.is(_)&&(t(u).prepend(a.renderActivityList(i)),a.clearForm()))}),!1},renderActivityList:function(t){return e.render(i.ACTIVITY_LIST_TEMPLATE,t)},clearForm:function(){t('textarea[data-toggle="qor.redactor"]').redactor("code.set",""),t(_).find('[name="QorResource.Content"],[name="QorResource.Note"]').val("")},click:function(i){var e=t(i.target);if(i.stopPropagation(),e.is(d)){var o=e.closest(".qor-activity__list");this.showEditForm(o)}},tabClick:function(i){var e=this,o=t(u).find(".qor-activity__list").size(),a=t("#scroll-tab-activity").data().noteTitle;if(!o){r=t(l).data("resource-url");o?t(u).find(".mdl-spinner").remove():t.ajax({url:r,method:"GET",dataType:"json",headers:{Accept:"application/json; charset=utf-8"},success:function(i){if(i.length){t(u).html("");for(var o=i.length-1;o>=0;o--)i[o].NoteTitle=a,t(u).append(e.renderActivityList(i[o]))}t(u).find(".mdl-spinner").remove()}})}},showEditForm:function(t){t.find(".qor-activity__list-note,.qor-activity__edit-button").removeClass("show").addClass("hide"),t.find(".qor-activity__edit-feilds,.qor-activity__edit-save-button").removeClass("hide").addClass("show")},hideEditForm:function(t){t.find(".qor-activity__list-note,.qor-activity__edit-button").removeClass("hide").addClass("show"),t.find(".qor-activity__edit-feilds,.qor-activity__edit-save-button").removeClass("show").addClass("hide")},initTabs:function(){t(".qor-slideout.is-shown").get(0)||(t(".qor-page__body").append(i.CONTENT_HTML),t(".qor-form-container").appendTo(t("#scroll-tab-form")),t("#scroll-tab-activity").appendTo(".mdl-layout__content"),t(".qor-page__header .qor-tab-bar--activity-header").prependTo(".mdl-layout.qor-sliderout__activity-container"),t(".qor-page > .qor-page__header").hide(),t(".qor-page > .qor-page__header .qor-action-forms").prependTo("#scroll-tab-form"),t(".qor-layout .mdl-layout__content.has-header").removeClass("has-header"),t("#scroll-tab-activity").wrapInner('<div class="qor-form-container"></div>'))}},i.CONTENT_HTML='<div class="mdl-layout mdl-js-layout qor-sliderout__activity-container"><main class="mdl-layout__content qor-slideout--activity-content"><div class="mdl-layout__tab-panel is-active" id="scroll-tab-form"></div></main></div>',i.DEFAULTS={},i.ACTIVITY_LIST_TEMPLATE='<div class="qor-activity__list"><form class="qor-activity__edit-note_form" action=[[ URL ]] method="POST"><input type="hidden" name="QorResource.ID" value=[[ ID ]]><div class="qor-activity__list-title"><strong>[[ CreatorName ]]</strong> <span>[[ Action ]]</span></div><div class="qor-activity__list-date">[[ UpdatedAt ]]</div><div class="qor-activity__list-content">[[ &Content ]]</div><div><strong>[[ NoteTitle ]]</strong><span class="qor-activity__list-note">[[ Note ]]</span><a class="mdl-button mdl-js-button mdl-button--icon qor-activity__edit-button" href="#"><i class="material-icons md-18 qor-activity__edit-button">edit</i></a><div class="mdl-textfield mdl-js-textfield qor-activity__edit-feilds"><label class="mdl-textfield__label">[[ Note ]]</label><input class="mdl-textfield__input" type="text" name="QorResource.Note" value="[[ Note ]]"></div><button class="mdl-button mdl-js-button mdl-button--icon qor-activity__edit-save-button" type="submit"><i class="material-icons md-24">done</i></button></div></form></div>',i.plugin=function(e){return this.each(function(){var a,n=t(this),r=n.data(o);if(!r){if(/destroy/.test(e))return;n.data(o,r=new i(this,e))}"string"==typeof e&&t.isFunction(a=r[e])&&a.apply(r)})},t.fn.qorSliderAfterShow.qorActivityinit=function(e,o){var a=t(".qor-slideout > .qor-slideout__body"),n=t(".qor-slideout .qor-tab-bar--activity-header");a.wrapInner(i.CONTENT_HTML),t(".qor-sliderout__activity-container").prepend(n),t(".qor-slideout--activity-content").append(t(".qor-slideout #scroll-tab-activity"))},t(function(){var e='[data-toggle="qor.activity"]';t(document).on(n,function(o){i.plugin.call(t(e,o.target),"destroy")}).on(a,function(o){i.plugin.call(t(e,o.target))}).triggerHandler(a)}),i});
+(function (factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as anonymous module.
+    define(['jquery'], factory);
+  } else if (typeof exports === 'object') {
+    // Node / CommonJS
+    factory(require('jquery'));
+  } else {
+    // Browser globals.
+    factory(jQuery);
+  }
+})(function ($) {
+
+  'use strict';
+
+  var FormData = window.FormData;
+  var Mustache = window.Mustache;
+  var NAMESPACE = 'qor.activity';
+  var EVENT_ENABLE = 'enable.' + NAMESPACE;
+  var EVENT_DISABLE = 'disable.' + NAMESPACE;
+  var EVENT_CLICK = 'click.' + NAMESPACE;
+  var EVENT_SUBMIT = 'submit.' + NAMESPACE;
+  var CLASS_EDIT_NOTE = '.qor-activity__edit-button';
+  var CLASS_TAB_ACTIVITY = '.qor-tab__activity';
+  var CLASS_EDIT_NOTE_FORM = '.qor-activity__edit-note_form';
+  var CLASS_NEW_NOTE_FORM = '.qor-activity__new-note_form';
+  var ID_LIST_TEMPLATE = '#template__qor-activity__list';
+  var CLASS_LISTS = '.qor-activity__lists';
+
+  function QorActivity(element, options) {
+    this.$element = $(element);
+    this.options = $.extend({}, QorActivity.DEFAULTS, $.isPlainObject(options) && options);
+    this.init();
+  }
+
+  QorActivity.prototype = {
+    constructor: QorActivity,
+
+    init: function () {
+      var $this = this.$element;
+      this.bind();
+      this.initTabs();
+      if(window.location.hash) {
+        var hash = window.location.hash;
+        if (hash==="#scroll-tab-activity") {
+          this.tabClick(null);
+          $("#scroll-tab-form").removeClass("is-active");
+          $this.addClass("is-active");
+          setTimeout( function() {
+            var labels = $(".mdl-layout__tab-bar-container .mdl-layout__tab-bar a");
+            $(labels[0]).removeClass("is-active");
+            $(labels[1]).addClass("is-active");
+          }, 200);
+        }
+      }
+      var customTemplate = $('[name="activity-list-template"]').html();
+      if (typeof customTemplate !== "undefined") {
+        QorActivity.ACTIVITY_LIST_TEMPLATE = customTemplate;
+      }
+    },
+
+    bind: function () {
+      this.$element.
+      on(EVENT_CLICK, $.proxy(this.click, this)).
+      on(EVENT_SUBMIT, 'form', $.proxy(this.submit, this));
+
+      $(document).on(EVENT_CLICK, CLASS_TAB_ACTIVITY, $.proxy(this.tabClick, this));
+    },
+
+    submit: function (e) {
+      var form = e.target;
+      var $form = $(e.target);
+      var FormDatas;
+      var self = this;
+      var NoteTitle = $('#scroll-tab-activity').data().noteTitle;
+
+      e.preventDefault();
+
+      FormDatas = $form.serialize();
+      $.ajax($form.prop('action'), {
+        method: $form.prop('method'),
+        data: FormDatas,
+        dataType: 'json',
+        headers: {
+          Accept: "application/json; charset=utf-8",
+        }
+      }).done(function (data) {
+        if (data.errors){
+          return;
+        }
+        data.NoteTitle = NoteTitle;
+
+        if ($form.is(CLASS_EDIT_NOTE_FORM)){
+          self.hideEditForm($form);
+          $form.find('.qor-activity__list-note').html(data.Note);
+        }
+
+        if ($form.is(CLASS_NEW_NOTE_FORM)){
+
+          $(CLASS_LISTS).prepend(self.renderActivityList(data));
+          self.clearForm();
+        }
+      });
+      return false;
+    },
+
+    renderActivityList: function (data) {
+      return Mustache.render(QorActivity.ACTIVITY_LIST_TEMPLATE, data);
+    },
+
+    clearForm: function () {
+      $('textarea[data-toggle="qor.redactor"]').redactor('code.set', '');
+      $(CLASS_NEW_NOTE_FORM).find('[name="QorResource.Content"],[name="QorResource.Note"]').val('');
+    },
+
+    click: function (e) {
+      var $target = $(e.target);
+      e.stopPropagation();
+
+      if ($target.is(CLASS_EDIT_NOTE)){
+        var parents = $target.closest('.qor-activity__list');
+        this.showEditForm(parents);
+      }
+    },
+
+    tabClick: function (e) {
+      var self = this;
+      var activityList = $(CLASS_LISTS).find('.qor-activity__list').size();
+      var NoteTitle = $('#scroll-tab-activity').data().noteTitle;
+
+      if (activityList){
+        return;
+      }
+
+      var url = $(CLASS_TAB_ACTIVITY).data('resource-url');
+
+      if (!activityList){
+        $.ajax({
+          url: url,
+          method: 'GET',
+          dataType: 'json',
+          headers: {
+            Accept: "application/json; charset=utf-8",
+          },
+          success: function (data) {
+            if (data.length){
+              $(CLASS_LISTS).html('');
+              for (var i = data.length - 1; i >= 0; i--) {
+                data[i].NoteTitle = NoteTitle;
+                $(CLASS_LISTS).append(self.renderActivityList(data[i]));
+              }
+            }
+            $(CLASS_LISTS).find('.mdl-spinner').remove();
+
+          }
+        });
+      } else {
+        $(CLASS_LISTS).find('.mdl-spinner').remove();
+      }
+    },
+
+    showEditForm: function (ele) {
+      ele.find('.qor-activity__list-note,.qor-activity__edit-button').removeClass('show').addClass('hide');
+      ele.find('.qor-activity__edit-feilds,.qor-activity__edit-save-button').removeClass('hide').addClass('show');
+    },
+
+    hideEditForm: function (ele) {
+      ele.find('.qor-activity__list-note,.qor-activity__edit-button').removeClass('hide').addClass('show');
+      ele.find('.qor-activity__edit-feilds,.qor-activity__edit-save-button').removeClass('show').addClass('hide');
+    },
+
+    initTabs : function () {
+      if (!$('.qor-slideout.is-shown').get(0)) {
+        $('.qor-page__body').append(QorActivity.CONTENT_HTML);
+        $('.qor-form-container').appendTo($('#scroll-tab-form'));
+        $('#scroll-tab-activity').appendTo('.mdl-layout__content');
+        $('.qor-page__header .qor-tab-bar--activity-header').prependTo('.mdl-layout.qor-sliderout__activity-container');
+        $('.qor-page > .qor-page__header').hide();
+        $('.qor-page > .qor-page__header .qor-action-forms').prependTo('#scroll-tab-form');
+        $('.qor-layout .mdl-layout__content.has-header').removeClass('has-header');
+        $('#scroll-tab-activity').wrapInner('<div class="qor-form-container"></div>');
+      }
+    }
+  };
+
+  QorActivity.CONTENT_HTML = (
+    '<div class="mdl-layout mdl-js-layout qor-sliderout__activity-container">' +
+      '<main class="mdl-layout__content qor-slideout--activity-content">' +
+        '<div class="mdl-layout__tab-panel is-active" id="scroll-tab-form"></div>' +
+      '</main>' +
+    '</div>'
+  );
+
+  QorActivity.DEFAULTS = {};
+
+  QorActivity.ACTIVITY_LIST_TEMPLATE = (
+    '<div class="qor-activity__list">' +
+      '<form class="qor-activity__edit-note_form" action=[[ URL ]] method="POST">' +
+        '<input type="hidden" name="QorResource.ID" value=[[ ID ]]>' +
+        '<div class="qor-activity__list-title">' +
+          '<strong>[[ CreatorName ]]</strong> <span>[[ Action ]]</span>' +
+        '</div>' +
+        '<div class="qor-activity__list-date">' +
+          '[[ UpdatedAt ]]' +
+        '</div>' +
+        '<div class="qor-activity__list-content">[[ &Content ]]</div>' +
+        '<div>' +
+          '<strong>[[ NoteTitle ]]</strong>' +
+          '<span class="qor-activity__list-note">' +
+            '[[ Note ]]' +
+          '</span>' +
+          '<a class="mdl-button mdl-js-button mdl-button--icon qor-activity__edit-button" href="#">' +
+            '<i class="material-icons md-18 qor-activity__edit-button">edit</i>' +
+          '</a>' +
+          '<div class="mdl-textfield mdl-js-textfield qor-activity__edit-feilds">' +
+            '<label class="mdl-textfield__label">[[ Note ]]</label>' +
+            '<input class="mdl-textfield__input" type="text" name="QorResource.Note" value="[[ Note ]]">' +
+          '</div>' +
+          '<button class="mdl-button mdl-js-button mdl-button--icon qor-activity__edit-save-button" type="submit"><i class="material-icons md-24">done</i></button>' +
+        '</div>' +
+      '</form>' +
+    '</div>'
+  );
+
+  QorActivity.plugin = function (options) {
+    return this.each(function () {
+      var $this = $(this);
+      var data = $this.data(NAMESPACE);
+      var fn;
+
+      if (!data) {
+
+        if (/destroy/.test(options)) {
+          return;
+        }
+
+        $this.data(NAMESPACE, (data = new QorActivity(this, options)));
+      }
+
+      if (typeof options === 'string' && $.isFunction(fn = data[options])) {
+        fn.apply(data);
+      }
+    });
+  };
+
+  // init activity html after sliderout loaded.
+  $.fn.qorSliderAfterShow.qorActivityinit = function (url, html) {
+    var $target = $('.qor-slideout > .qor-slideout__body');
+    var $tab = $('.qor-slideout .qor-tab-bar--activity-header');
+    $target.wrapInner(QorActivity.CONTENT_HTML);
+    $('.qor-sliderout__activity-container').prepend($tab);
+    $('.qor-slideout--activity-content').append($('.qor-slideout #scroll-tab-activity'));
+  };
+
+  $(function () {
+    var selector = '[data-toggle="qor.activity"]';
+
+    $(document).
+      on(EVENT_DISABLE, function (e) {
+        QorActivity.plugin.call($(selector, e.target), 'destroy');
+      }).
+      on(EVENT_ENABLE, function (e) {
+        QorActivity.plugin.call($(selector, e.target));
+      }).
+      triggerHandler(EVENT_ENABLE);
+  });
+
+  return QorActivity;
+
+});

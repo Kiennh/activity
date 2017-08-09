@@ -83,7 +83,7 @@ func Register(res *admin.Resource, listTemplate string) {
 		})
 	}
 
-	res.GetAdmin().RegisterViewPath("github.com/qor/activity/views")
+	res.GetAdmin().RegisterViewPath("github.com/kiennh/activity/views")
 	res.UseTheme("activity")
 
 	qorAdmin.RegisterFuncMap("activity_resource", func() *admin.Resource {

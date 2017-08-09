@@ -40,6 +40,23 @@
       var $this = this.$element;
       this.bind();
       this.initTabs();
+      if(window.location.hash) {
+        var hash = window.location.hash;
+        if (hash==="#scroll-tab-activity") {
+          this.tabClick(null);
+          $("#scroll-tab-form").removeClass("is-active");
+          $this.addClass("is-active");
+          setTimeout( function() {
+            var labels = $(".mdl-layout__tab-bar-container .mdl-layout__tab-bar a");
+            $(labels[0]).removeClass("is-active");
+            $(labels[1]).addClass("is-active");
+          }, 200);
+        }
+      }
+      var customTemplate = $('[name="activity-list-template"]').html();
+      if (typeof customTemplate !== "undefined") {
+        QorActivity.ACTIVITY_LIST_TEMPLATE = customTemplate;
+      }
     },
 
     bind: function () {
@@ -124,7 +141,7 @@
           dataType: 'json',
           headers: {
             Accept: "application/json; charset=utf-8",
-          }
+          },
           success: function (data) {
             if (data.length){
               $(CLASS_LISTS).html('');
