@@ -109,7 +109,7 @@
     },
 
     clearForm: function () {
-      $('textarea[data-toggle="qor.redactor"]').redactor('code.set', '');
+      $('.qor-activities__new textarea[data-toggle="qor.redactor"]').redactor('code.set', '');
       $(CLASS_NEW_NOTE_FORM).find('[name="QorResource.Content"],[name="QorResource.Note"]').val('');
     },
 
