@@ -8,9 +8,16 @@ import (
 	"github.com/qor/admin"
 )
 
+type SetResourceAble interface {
+	SetResourceType(string)
+	SetResourceID(string)
+	SetUserName(string)
+}
+
 func prepareGetActivitiesDB(context *admin.Context, result interface{}, types ...string) *gorm.DB {
+	var baseStruct = context.Resource.NewStruct()
 	resourceID := getPrimaryKey(context, result)
-	db := context.GetDB().Order("id asc").Where("resource_id = ? AND resource_type = ?", resourceID, context.Resource.ToParam())
+	db := context.GetDB().Model(baseStruct).Order("id asc").Where("resource_id = ? AND resource_type = ?", resourceID, context.Resource.ToParam())
 
 	var inTypes, notInTypes []string
 	for _, t := range types {
@@ -33,10 +40,11 @@ func prepareGetActivitiesDB(context *admin.Context, result interface{}, types ..
 }
 
 // GetActivities get activities for selected types
-func GetActivities(context *admin.Context, result interface{}, types ...string) ([]QorActivity, error) {
-	var activities []QorActivity
+func GetActivities(context *admin.Context, result interface{}, types ...string) (interface{}, error) {
+	var activityResource = context.Admin.GetResource("QorActivity")
+	var activities = activityResource.NewSlice()
 	db := prepareGetActivitiesDB(context, result, types...)
-	err := db.Find(&activities).Error
+	err := db.Find(activities).Error
 	return activities, err
 }
 
@@ -48,14 +56,17 @@ func GetActivitiesCount(context *admin.Context, result interface{}, types ...str
 }
 
 // CreateActivity creates an activity for this context
-func CreateActivity(context *admin.Context, activity *QorActivity, result interface{}) error {
+func CreateActivity(context *admin.Context, activity interface{}, result interface{}) error {
 	var activityResource = context.Admin.GetResource("QorActivity")
 
 	// fill in necessary activity fields
-	activity.ResourceType = context.Resource.ToParam()
-	activity.ResourceID = getPrimaryKey(context, result)
-	if context.CurrentUser != nil {
-		activity.CreatorName = context.CurrentUser.DisplayName()
+	if setter, ok := activity.(SetResourceAble); ok {
+		setter.SetResourceType(context.Resource.ToParam())
+		setter.SetResourceID(getPrimaryKey(context, result))
+		if context.CurrentUser != nil {
+			setter.SetUserName(context.CurrentUser.DisplayName())
+		}
+
 	}
 
 	return activityResource.CallSave(activity, context.Context)

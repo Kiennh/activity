@@ -13,7 +13,7 @@ type controller struct {
 
 func (ctrl controller) GetActivity(context *admin.Context) {
 	var (
-		activities       []QorActivity
+		activities       interface{}
 		activityResource = ctrl.ActivityResource
 		result, err      = context.FindOne()
 	)
@@ -38,7 +38,7 @@ func (ctrl controller) GetActivity(context *admin.Context) {
 func (ctrl controller) CreateActivity(context *admin.Context) {
 	var (
 		activityResource = ctrl.ActivityResource
-		newActivity      = &QorActivity{}
+		newActivity      = ctrl.ActivityResource.NewStruct()
 		result, err      = context.FindOne()
 	)
 

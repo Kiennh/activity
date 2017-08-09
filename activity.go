@@ -27,8 +27,19 @@ type QorActivity struct {
 	audited.AuditedModel
 }
 
+func (qa *QorActivity) SetResourceType(resourceType string) {
+	qa.ResourceType = resourceType
+}
+
+func (qa *QorActivity) SetResourceID(resourceID string) {
+	qa.ResourceID = resourceID
+}
+func (qa *QorActivity) SetUserName(userName string) {
+	qa.CreatorName = userName
+}
+
 // Register register activity feature for an qor resource
-func Register(res *admin.Resource) {
+func Register(res *admin.Resource, listTemplate string) {
 	var (
 		qorAdmin         = res.GetAdmin()
 		activityResource = qorAdmin.GetResource("QorActivity")
