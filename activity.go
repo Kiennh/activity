@@ -35,8 +35,8 @@ func (qa *QorActivity) SetResourceType(resourceType string) {
 func (qa *QorActivity) SetResourceID(resourceID string) {
 	qa.ResourceID = resourceID
 }
-func (qa *QorActivity) SetUserName(userName string) {
-	qa.CreatorName = userName
+func (qa *QorActivity) SetCreated(user qor.CurrentUser) {
+	qa.CreatorName = user.DisplayName()
 }
 
 var listTemplates map[string]template.HTML

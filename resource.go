@@ -6,12 +6,13 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/qor/admin"
+	"github.com/qor/qor"
 )
 
 type SetResourceAble interface {
 	SetResourceType(string)
 	SetResourceID(string)
-	SetUserName(string)
+	SetCreated(qor.CurrentUser)
 }
 
 func prepareGetActivitiesDB(context *admin.Context, result interface{}, types ...string) *gorm.DB {
@@ -64,7 +65,7 @@ func CreateActivity(context *admin.Context, activity interface{}, result interfa
 		setter.SetResourceType(context.Resource.ToParam())
 		setter.SetResourceID(getPrimaryKey(context, result))
 		if context.CurrentUser != nil {
-			setter.SetUserName(context.CurrentUser.DisplayName())
+			setter.SetCreated(context.CurrentUser)
 		}
 
 	}
