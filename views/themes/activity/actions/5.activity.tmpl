@@ -2,6 +2,12 @@
   {{$resource := .Resource}}
   {{$result := .Result}}
   {{$action := print "!" activity_resource.ToParam }}
+  {{ $activity_list_template := list_template $resource.Name }}
+  {{ if not (eq $activity_list_template "") }}
+        <script name="activity-list-template" type="x-tmpl-mustache">
+          {{ $activity_list_template }}
+        </script>
+  {{ end }}
 
   <header class="mdl-layout__header mdl-layout--fixed-tabs qor-tab-bar--activity-header">
     <div class="mdl-layout__tab-bar mdl-js-ripple-effect">

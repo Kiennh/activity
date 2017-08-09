@@ -2,6 +2,7 @@ package activity
 
 import (
 	"fmt"
+	"html/template"
 	"strings"
 
 	"github.com/jinzhu/gorm"
@@ -38,13 +39,18 @@ func (qa *QorActivity) SetUserName(userName string) {
 	qa.CreatorName = userName
 }
 
+var listTemplates map[string]template.HTML
+
 // Register register activity feature for an qor resource
 func Register(res *admin.Resource, listTemplate string) {
 	var (
 		qorAdmin         = res.GetAdmin()
 		activityResource = qorAdmin.GetResource("QorActivity")
 	)
-
+	if listTemplates == nil {
+		listTemplates = make(map[string]template.HTML)
+	}
+	listTemplates[res.Name] = template.HTML(listTemplate)
 	if activityResource == nil {
 		// Auto run migration before add resource
 		res.GetAdmin().Config.DB.AutoMigrate(&QorActivity{})
@@ -92,6 +98,10 @@ func Register(res *admin.Resource, listTemplate string) {
 
 	qorAdmin.RegisterFuncMap("get_activities_count", func(context *admin.Context) int {
 		return GetActivitiesCount(context, context.Result)
+	})
+
+	qorAdmin.RegisterFuncMap("list_template", func(resourceName string) template.HTML {
+		return listTemplates[resourceName]
 	})
 
 	router := res.GetAdmin().GetRouter()
