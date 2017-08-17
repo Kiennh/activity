@@ -106,7 +106,7 @@ func Register(res *admin.Resource, listTemplate string) {
 
 	router := res.GetAdmin().GetRouter()
 	ctrl := controller{ActivityResource: activityResource}
-	router.Get(fmt.Sprintf("/%v/%v/!qor_activities", res.ToParam(), res.ParamIDName()), ctrl.GetActivity)
-	router.Post(fmt.Sprintf("/%v/%v/!qor_activities", res.ToParam(), res.ParamIDName()), ctrl.CreateActivity)
-	router.Post(fmt.Sprintf("/%v/%v/!qor_activities/%v/edit", res.ToParam(), res.ParamIDName(), activityResource.ParamIDName()), ctrl.UpdateActivity)
+	router.Get(fmt.Sprintf("/%v/%v/!%v", res.ToParam(), res.ParamIDName(), activityResource.ToParam()), ctrl.GetActivity)
+	router.Post(fmt.Sprintf("/%v/%v/!%v", res.ToParam(), res.ParamIDName(), activityResource.ToParam()), ctrl.CreateActivity)
+	router.Post(fmt.Sprintf("/%v/%v/!%v/%v/edit", res.ToParam(), res.ParamIDName(), activityResource.ToParam(), activityResource.ParamIDName()), ctrl.UpdateActivity)
 }
