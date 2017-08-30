@@ -86,10 +86,10 @@
         }
       }).done(function (data) {
         if (data.errors){
+          alert(data.errors);
           return;
         }
         data.NoteTitle = NoteTitle;
-
         if ($form.is(CLASS_EDIT_NOTE_FORM)){
           self.hideEditForm($form);
           $form.find('.qor-activity__list-note').html(data.Note);
@@ -109,7 +109,7 @@
     },
 
     clearForm: function () {
-      $('textarea[data-toggle="qor.redactor"]').redactor('code.set', '');
+      $('.qor-activities__new textarea[data-toggle="qor.redactor"]').redactor('code.set', '');
       $(CLASS_NEW_NOTE_FORM).find('[name="QorResource.Content"],[name="QorResource.Note"]').val('');
     },
 
@@ -176,6 +176,7 @@
         $('#scroll-tab-activity').appendTo('.mdl-layout__content');
         $('.qor-page__header .qor-tab-bar--activity-header').prependTo('.mdl-layout.qor-sliderout__activity-container');
         $('.qor-page > .qor-page__header').hide();
+        $('.qor-page__body').css("padding-top", 0);
         $('.qor-page > .qor-page__header .qor-action-forms').prependTo('#scroll-tab-form');
         $('.qor-layout .mdl-layout__content.has-header').removeClass('has-header');
         $('#scroll-tab-activity').wrapInner('<div class="qor-form-container"></div>');
