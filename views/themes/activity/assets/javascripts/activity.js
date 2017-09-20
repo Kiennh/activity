@@ -67,6 +67,11 @@
       $(document).on(EVENT_CLICK, CLASS_TAB_ACTIVITY, $.proxy(this.tabClick, this));
     },
 
+    unbind: function() {
+        this.$element.off(EVENT_CLICK).off(EVENT_SUBMIT, 'form');
+        $(document).off(EVENT_CLICK, CLASS_TAB_ACTIVITY);
+    },
+
     submit: function (e) {
       var form = e.target;
       var $form = $(e.target);
@@ -125,7 +130,7 @@
 
     tabClick: function (e) {
       var self = this;
-      var activityList = $(CLASS_LISTS).find('.qor-activity__list').size();
+      var activityList = $(CLASS_LISTS).find('.qor-activity__list').length;
       var NoteTitle = $('#scroll-tab-activity').data().noteTitle;
 
       if (activityList){
