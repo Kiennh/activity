@@ -136,6 +136,7 @@
       if (activityList){
         return;
       }
+      console.log("tabClick");
 
       var url = $(CLASS_TAB_ACTIVITY).data('resource-url');
 
@@ -186,6 +187,11 @@
         $('.qor-layout .mdl-layout__content.has-header').removeClass('has-header');
         $('#scroll-tab-activity').wrapInner('<div class="qor-form-container"></div>');
       }
+    },
+    
+    destroy: function() {
+        this.unbind();
+        this.$element.removeData(NAMESPACE);
     }
   };
 
