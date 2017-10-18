@@ -40,6 +40,17 @@
         this.$element = $(element);
         this.options = $.extend({}, QorActivity.DEFAULTS, $.isPlainObject(options) && options);
         this.init();
+        if(window.location.hash) {
+            var hash = window.location.hash;
+            if (hash==="#scroll-tab-activity") {
+              $('#activity-lists').click();
+            }
+        }
+        $('button[data-id="#activity-lists"]').click();
+        var customTemplate = $('[name="activity-list-template"]').html();
+          if (typeof customTemplate !== "undefined") {
+            QorActivity.ACTIVITY_LIST_TEMPLATE = customTemplate;
+        }
     }
 
     QorActivity.prototype = {

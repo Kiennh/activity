@@ -1,4 +1,4 @@
-{{if (or (eq .Action "edit") (eq .Action "show")) }}
+{{if (or (eq .Action "edit") (eq .Action "show")) }} 
   {{$resource := .Resource}}
   {{$result := .Result}}
   {{$action := print "!" activity_resource.ToParam }}
@@ -7,7 +7,7 @@
         <script name="activity-list-template" type="x-tmpl-mustache">
           {{ $activity_list_template }}
         </script>
-  {{ end }}
+  {{ end }}      
 <div data-toggle="qor.activity" class="qor-activities__container">
   <div class="qor-activities__header">
     <button data-id="#activity-form" class="is-active">{{t (printf "%v.name" $resource.ToParam) $resource.Name}}</button>
@@ -29,9 +29,22 @@
       </form>
     </div>
 
-    <div class="qor-activity__lists">
-      <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
-    </div>
+    <table class="table table-condensed" style="border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>{{t "qor_activity.list.label.action" "Action"}}</th>
+          <th>{{t "qor_activity.list.label.resoning" "Resoning"}}</th>
+          <th>{{t "qor_activity.list.label.next_meeting" "NextMeeting"}}</th>
+          <th>{{t "qor_activity.list.label.next_require" "NextRequire"}}</th>
+         <th>{{t "qor_activity.list.label.update_at" "UpdatedAt"}}</th>
+          <th>{{t "qor_activity.list.label.creator_name" "CreatorName"}}</th>
+        </tr>
+      </thead>
+      <tbody class="qor-activity__lists">
+      </tbody>
+    </table>
+
 
   </div>
   <div id="activity-form" class="qor-activities__content"></div>
